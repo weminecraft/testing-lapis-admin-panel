@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>test</title>
-<link rel="icon" type="image/png" href="lapis.png" / 
+<title>Animated Detection UI</title>
 <style>
   body {margin:0;font-family:Arial,Helvetica,sans-serif;background:#111;height:100vh;display:flex;justify-content:center;align-items:center;color:#eee;overflow:hidden;}
   .wrap{display:grid;place-items:center;height:100%;}
@@ -70,7 +69,7 @@ async function animateText(id,text){
   for(let i=0;i<text.length;i++){
     el.textContent += text[i];
     el.style.opacity='1';
-    await new Promise(r=>setTimeout(r,200)); // slower animation
+    await new Promise(r=>setTimeout(r,200));
   }
 }
 async function init(){
