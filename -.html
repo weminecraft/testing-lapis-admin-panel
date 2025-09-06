@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday Zari</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .btn {
+      padding: 1em 2em;
+      font-size: 1.5em;
+      font-weight: 600;
+      background: #00bfff;
+      color: white;
+      border: none;
+      border-radius: 1em;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #009acd;
+    }
+
+    .popup {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      transform: translate(25px, -50%);
+      width: 400px;
+      background: #111;
+      color: white;
+      padding: 1.5em;
+      border-radius: 1.8em;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      overflow: hidden;
+      z-index: 20;
+    }
+
+    /* Wave edges */
+    .popup::before, .popup::after {
+      content: '';
+      position: absolute;
+      width: 300%;
+      height: 150%;
+      background: rgba(0, 191, 255, 0.3);
+      top: -40%;
+      left: -100%;
+      border-radius: 45%;
+      animation: wave 6s infinite;
+      z-index: -1;
+    }
+
+    .popup::after {
+      background: rgba(0, 191, 255, 0.5);
+      top: auto;
+      bottom: -40%;
+      animation-direction: reverse;
+    }
+
+    @keyframes wave {
+      0% { transform: translateX(0); }
+      40% { transform: translateX(50%); }
+      60% { transform: translateX(50%); }
+      100% { transform: translateX(0); }
+    }
+
+    .title {
+      font-size: 1.7em;
+      font-weight: 600;
+      color: #00bfff;
+      margin-bottom: 0.5em;
+    }
+
+    .subtitle {
+      font-size: 1em;
+      color: #ccc;
+      margin-bottom: 1em;
+    }
+
+    .message {
+      font-size: 0.95em;
+      line-height: 1.5;
+      text-align: left;
+      height: 250px;
+      overflow-y: auto;
+    }
+
+    /* Fake login */
+    .login-panel {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1a1a1a;
+      color: white;
+      padding: 2em;
+      border-radius: 1em;
+      z-index: 100;
+      box-shadow: 0 0 30px rgba(0,0,0,0.7);
+      text-align: center;
+    }
+
+    .login-panel input {
+      padding: 0.7em;
+      margin: 1em 0;
+      width: 100%;
+      border-radius: 0.5em;
+      border: none;
+      outline: none;
+      font-size: 1em;
+    }
+
+    .login-panel button {
+      padding: 0.6em 1.2em;
+      font-size: 1em;
+      background: #00bfff;
+      color: white;
+      border: none;
+      border-radius: 0.5em;
+      cursor: pointer;
+    }
+
+    .blurred {
+      filter: blur(8px);
+      pointer-events: none;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="mainContent" class="container">
+    <button class="btn">Open</button>
+    <audio id="song" loop>
+      <source src="happy22.mp3" type="audio/mpeg">
+    </audio>
+    <div class="popup" id="popup">
+      <div class="title"><i class="fa-solid fa-cake-candles"></i> Happy 14th Birthday Zari</div>
+      <div class="subtitle">September 7, 2025</div>
+      <div class="message">
+        today zari u turn 14 and i want this day to remind u how special u are to the people who know u 
+        u are growing into someone stronger smarter and more confident with each year and even if u doubt urself sometimes everyone around u can see ur light 
+        this birthday is not about a number it is about celebrating how far u have come and all the things u have learned and done along the way 
+        u have made people laugh and smile and u have given ur time and kindness in ways u might not even realize 
+        being 14 means stepping closer to new adventures new friendships and new challenges and i believe u will face them all with courage 
+        remember this age is full of change but change is good it shapes u into someone better each time 
+        i hope ur day is full of laughter fun music and moments u will always remember 
+        eat the best cake enjoy the gifts and feel loved because u are 
+        happy birthday zari may this year bring u peace happiness and all the good things u deserve 
+        keep shining because the world needs ur light 
+        <br><br>
+        ps i rlly thought ur 14 alr
+      </div>
+    </div>
+  </div>
+
+  <div class="login-panel" id="loginPanel">
+    <h2>Lapis Admin Panel</h2>
+    <p>Enter Access Code:</p>
+    <input type="password" id="accessCode" placeholder="Enter code">
+    <button id="submitCode">Submit</button>
+  </div>
+
+<script>
+  const btn = document.querySelector('.btn');
+  const popup = document.getElementById('popup');
+  const song = document.getElementById('song');
+  const loginPanel = document.getElementById('loginPanel');
+  const mainContent = document.getElementById('mainContent');
+  const submitCode = document.getElementById('submitCode');
+  const accessCode = document.getElementById('accessCode');
+
+  let unlocked = false;
+
+  // Double click opens login panel
+  btn.addEventListener('dblclick', () => {
+    if (!unlocked) {
+      loginPanel.style.display = 'block';
+      mainContent.classList.add('blurred');
+    }
+  });
+
+  // Submit login
+  submitCode.addEventListener('click', () => {
+    if (accessCode.value === 'PAYMEALR') {
+      unlocked = true;
+      loginPanel.style.display = 'none';
+      mainContent.classList.remove('blurred');
+      popup.style.display = 'block';
+      song.play();
+    } else {
+      alert('Invalid code');
+    }
+  });
+</script>
+</body>
+</html>
