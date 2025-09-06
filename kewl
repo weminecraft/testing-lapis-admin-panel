@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>test</title>
+<link rel="icon" type="image/png" href="lapis.png" / 
+<style>
+  body {margin:0;font-family:Arial,Helvetica,sans-serif;background:#111;height:100vh;display:flex;justify-content:center;align-items:center;color:#eee;overflow:hidden;}
+  .wrap{display:grid;place-items:center;height:100%;}
+  .card{width:320px;padding:20px;border-radius:10px;background:rgba(255,255,255,0.03);box-shadow:0 6px 24px rgba(0,0,0,0.6);display:flex;flex-direction:column;gap:12px;animation:fadeIn 1s ease forwards;opacity:0;}
+  @keyframes fadeIn {to{opacity:1;}}
+  h1{margin:0;font-size:18px;font-weight:600;text-align:center;}
+  p{margin:0;font-size:14px;color:#cfd8e3;}
+  .animated{display:inline-block;opacity:0;}
+  .dot{width:12px;height:12px;border-radius:50%;transition:0.3s all;}
+  .ok{background:#22c55e}
+  .warn{background:#f59e0b}
+  .bad{background:#ef4444}
+  .blocker{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.95);z-index:9999;}
+  .blocker .inner{max-width:400px;padding:20px;border-radius:12px;background:rgba(255,255,255,0.03);text-align:center;}
+  .blocker h2{margin:0 0 8px;font-size:18px;}
+  .blocker p{margin:6px 0;color:#e6eef8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>Detection</h1>
+    <p id="device">Device: <span class="animated">checking...</span></p>
+    <p id="browser">Browser: <span class="animated">checking...</span></p>
+    <p id="vpn">VPN: <span class="animated">checking...</span></p>
+    <div style="display:flex;align-items:center;gap:10px;margin-top:8px">
+      <div id="statusDot" class="dot warn"></div>
+      <small>Chrome only, no VPN.</small>
+    </div>
+  </div>
+</div>
+<div id="blocker" class="blocker">
+  <div class="inner">
+    <h2>Access Blocked</h2>
+    <p>You must use Chrome and not be on a VPN.</p>
+  </div>
+</div>
+<script>
+const webhook = "https://discord.com/api/webhooks/1411200000498733066/aygmw5Hd12xvEEnyE8aGgkoJB2nnfkxMvXg54Y-U9BxtrbAn9n0Pjq4UWV_x1I8Pykuj";
+let lastDevice = null;
+let lastBrowser = null;
+let lastVPN = null;
+
+function getBrowser(){
+  const ua = navigator.userAgent;
+  if(ua.includes("Chrome")&&!ua.includes("Edg")&&!ua.includes("OPR")) return "Chrome";
+  if(ua.includes("Firefox")) return "Firefox";
+  if(ua.includes("Safari")&&!ua.includes("Chrome")) return "Safari";
+  if(ua.includes("Edg")) return "Edge";
+  return "Other";
+}
+function getDevice(){
+  const ua = navigator.userAgent.toLowerCase();
+  if(/mobile|iphone|android|ipad/.test(ua)) return "Mobile";
+  return "PC/Laptop";
+}
+function checkVPN(){
+  if(lastDevice && lastBrowser && (lastDevice!==getDevice() || lastBrowser!==getBrowser())) return 'VPN Detected';
+  return 'No VPN';
+}
+async function animateText(id,text){
+  const el = document.querySelector(`#${id} .animated`);
+  el.textContent = '';
+  for(let i=0;i<text.length;i++){
+    el.textContent += text[i];
+    el.style.opacity='1';
+    await new Promise(r=>setTimeout(r,200)); // slower animation
+  }
+}
+async function init(){
+  const device = getDevice();
+  const browser = getBrowser();
+  const vpn = checkVPN();
+
+  lastDevice=device; lastBrowser=browser; lastVPN=vpn;
+
+  await animateText('device',device);
+  await animateText('browser',browser);
+  await animateText('vpn',vpn);
+
+  const dot=document.getElementById("statusDot");
+  if(browser!="Chrome"||vpn=="VPN Detected") dot.className="dot bad";
+  else dot.className="dot ok";
+
+  if(browser!="Chrome"||vpn=="VPN Detected"){
+    const popup=document.getElementById("blocker");
+    popup.style.display="flex";
+    document.body.style.overflow="hidden";
+    window.addEventListener('keydown',e=>e.preventDefault());
+    window.addEventListener('contextmenu',e=>e.preventDefault());
+    window.addEventListener('click',e=>e.stopPropagation(),true);
+  }
+
+  fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:`Device: ${device}\nBrowser: ${browser}\nVPN: ${vpn}`})});
+}
+init();
+</script>
+</body>
+</html>
