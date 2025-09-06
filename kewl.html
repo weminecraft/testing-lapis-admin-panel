@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Test</title>
+<title>Animated Detection UI</title>
 <link rel="icon" type="image/png" href="lapis.png" />
 <style>
   body {margin:0;font-family:Arial,Helvetica,sans-serif;background:#111;height:100vh;display:flex;justify-content:center;align-items:center;color:#eee;overflow:hidden;}
@@ -49,10 +49,7 @@ let lastVPN = null;
 
 function getBrowser(){
   const ua = navigator.userAgent;
-  if(ua.includes("Chrome")&&!ua.includes("Edg")&&!ua.includes("OPR")) return "Chrome";
-  if(ua.includes("Firefox")) return "Firefox";
-  if(ua.includes("Safari")&&!ua.includes("Chrome")) return "Safari";
-  if(ua.includes("Edg")) return "Edge";
+  if(ua.includes("Chrome")&&!ua.includes("Edg")&&!ua.includes("OPR")&&!ua.includes("Brave")) return "Chrome";
   return "Other";
 }
 function getDevice(){
